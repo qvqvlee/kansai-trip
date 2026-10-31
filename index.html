@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Kansai Notebook — 채림언니랑 간사이</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Jost:wght@300;400;500;600&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&display=swap">
+<style>
+:root{
+  --desk:#e9e6e1;--paper:#fbfaf7;--paper2:#f3f1ec;--ink:#1d1c1a;--ink2:#6f6b65;--rule:#d9d5ce;--rule2:#ece9e3;
+  --mark:rgba(240,206,92,.75);--hot:#b3263c;--gold:#8c7a5b;--good:#4f7d5c;--warn:#b26a26;--sky:#4b6b8a;--water:#e4e9ec;
+  --f-title:"Jost","Gowun Dodum",system-ui,sans-serif;--f-label:"Jost",system-ui,sans-serif;
+  --f-word:"Cormorant Garamond",Georgia,serif;--f-ko:"Gowun Dodum","Apple SD Gothic Neo",system-ui,sans-serif;
+  --shadow:0 30px 60px -30px rgba(40,30,20,.35),0 2px 6px rgba(40,30,20,.06);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:70px}
+body{margin:0;background:var(--desk);color:var(--ink);font-family:var(--f-ko);font-size:14.5px;line-height:1.65;-webkit-font-smoothing:antialiased;
+  padding:max(14px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--hot);outline-offset:2px}
+mark{background:linear-gradient(transparent 50%,var(--mark) 50%,var(--mark) 92%,transparent 92%);color:inherit;padding:0 2px}
+.lbl{font-family:var(--f-label);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink2)}
+.book{max-width:1080px;margin:0 auto;background:var(--paper);border-radius:22px 8px 8px 22px;box-shadow:var(--shadow);overflow:clip}
+.bhead{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 16px;padding:22px 30px 14px;border-bottom:1.5px solid var(--ink)}
+.logo{margin:0;font-family:var(--f-word);font-weight:700;font-size:34px;line-height:1;letter-spacing:.01em}
+.logo i{font-weight:500;color:var(--hot)}
+.sub{margin-top:6px;font-family:var(--f-label);font-size:12px;letter-spacing:.14em;color:var(--ink2)}
+.sync{font-family:var(--f-label);font-size:11px;letter-spacing:.06em;color:var(--ink2);display:flex;align-items:center;gap:6px}
+.sync .d{width:7px;height:7px;border-radius:50%;background:var(--rule)}
+.sync.on .d{background:var(--good)} .sync.off .d{background:var(--warn)}
+nav.tabs{position:sticky;top:0;z-index:20;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;padding:0 22px;background:color-mix(in srgb,var(--paper) 94%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--rule)}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs a{flex:none;text-decoration:none;padding:13px 12px 11px;font-family:var(--f-label);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink2);border-bottom:2px solid transparent}
+nav.tabs a span{font-family:var(--f-ko);letter-spacing:0;text-transform:none;font-size:13px}
+nav.tabs a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--hot)}
+main{padding:8px 30px 40px}
+section.view{display:none;animation:fade .45s ease}
+section.view.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}}
+.ph{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:18px 0 8px;border-bottom:1.5px solid var(--ink);margin-bottom:16px}
+.ph h2{margin:0;font-family:var(--f-title);font-weight:600;font-size:26px;line-height:1.1}
+.ph h2 small{margin-left:8px;font-weight:300;font-size:14px;color:var(--ink2)}
+.note{margin:10px 0;font-size:13px;color:var(--ink2);padding:8px 12px;border-left:2px solid var(--gold);background:var(--paper2)}
+.note.warn{border-left-color:var(--warn);color:#6b4a26}
+.chip{display:inline-block;padding:1px 9px;border:1px solid var(--ink);border-radius:999px;font-family:var(--f-label);font-size:10.5px;letter-spacing:.06em;white-space:nowrap}
+.chip.soft{border-color:var(--rule);color:var(--ink2)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid var(--ink);background:none;border-radius:999px;font-size:12.5px;text-decoration:none;white-space:nowrap}
+.btn:hover{background:var(--paper2)}
+.btn.solid{background:var(--ink);color:var(--paper)}
+.btn.sm{padding:2px 9px;font-size:11.5px}
+.btn.ghost{border-color:var(--rule);color:var(--ink2)}
+.cat{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;transform:translateY(-1px)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+
+/* timeline */
+.week{display:grid;grid-template-columns:96px 1fr;gap:18px;padding:16px 0;border-bottom:1px solid var(--rule)}
+.dcol .num{font-family:var(--f-title);font-size:34px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+.dcol .num small{font-size:15px;font-weight:400;color:var(--ink2)}
+.dcol .wd{font-family:var(--f-label);font-size:11px;letter-spacing:.2em;color:var(--hot);margin-top:4px}
+.day{display:grid;grid-template-columns:96px 1fr;gap:18px;padding:18px 0;border-bottom:1px solid var(--rule)}
+.dhead{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;margin-bottom:8px}
+.dhead h3{margin:0;font-family:var(--f-title);font-size:19px;font-weight:600}
+.sleep{font-size:12px;color:var(--ink2)}
+.sleep b{color:var(--ink);font-weight:400;background:linear-gradient(transparent 55%,var(--mark) 55%)}
+.stops{list-style:none;margin:0;padding:0;position:relative}
+.stops::before{content:"";position:absolute;left:52px;top:8px;bottom:8px;width:1px;background:var(--rule)}
+.stops li{position:relative;display:grid;grid-template-columns:44px 1fr;gap:16px;padding:7px 0}
+.stops li::before{content:"";position:absolute;left:49px;top:14px;width:7px;height:7px;border-radius:50%;background:var(--paper);border:1.5px solid var(--ink)}
+.stops li.mv::before{border-color:var(--sky);background:var(--sky)}
+.stops li.todo::before{border-style:dashed;border-color:var(--ink2)}
+.stops .t{font-family:var(--f-label);font-size:11px;letter-spacing:.04em;color:var(--ink2);text-align:right;padding-top:2px;white-space:nowrap}
+.stops .n{font-size:15px}
+.stops .x{font-size:12.5px;color:var(--ink2);margin-top:1px}
+.stops .c{font-family:var(--f-label);font-size:11.5px;color:var(--good);margin-left:6px;white-space:nowrap}
+.stops .ln{margin-top:4px;display:flex;gap:6px;flex-wrap:wrap}
+.mission{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+
+/* map */
+.mapbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:10px}
+.seg{display:inline-flex;border:1px solid var(--ink);border-radius:999px;overflow:hidden}
+.seg button{border:0;background:none;padding:5px 14px;font-size:12.5px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--ink2)}
+.gmap{width:100%;height:min(62vh,520px);border:1px solid var(--rule);border-radius:6px;margin:6px 0 4px;background:var(--paper2)}
+.mapwrap{border:1px solid var(--rule);border-radius:6px;background:#f7f5f0;overflow:hidden}
+.mapwrap svg{display:block;width:100%;height:auto;touch-action:manipulation}
+.pin{cursor:pointer}
+.pin:hover circle.dot,.pin.sel circle.dot{r:11}
+.pin.sel circle.ring{opacity:1}
+.mlabel{font-family:var(--f-ko);font-size:13px;fill:var(--ink);paint-order:stroke;stroke:#f7f5f0;stroke-width:4px;stroke-linejoin:round}
+.mlabel.st{font-size:12px;fill:var(--ink2)}
+.mlabel.area{font-family:var(--f-word);font-style:italic;font-size:17px;fill:#9aa7ad;stroke:none}
+.mdetail{margin-top:12px;padding:14px 16px;border:1px solid var(--rule);border-radius:6px;background:var(--paper);min-height:70px}
+.mdetail h4{margin:0 0 4px;font-size:17px;font-weight:400}
+.mdetail p{margin:2px 0;font-size:13px;color:var(--ink2)}
+
+/* cards */
+.city{margin-top:26px}
+.city>h3{margin:0 0 10px;display:flex;align-items:baseline;gap:10px;font-family:var(--f-word);font-size:26px;font-weight:700}
+.city>h3 small{font-family:var(--f-label);font-size:11px;letter-spacing:.18em;color:var(--ink2);font-weight:400;text-transform:uppercase}
+.card{position:relative;border:1px solid var(--rule);border-radius:6px;padding:14px 16px 12px;background:var(--paper);display:flex;flex-direction:column;gap:6px}
+.card.picked{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.card h4{margin:0;font-size:16.5px;font-weight:400;line-height:1.35}
+.card .jp{font-family:var(--f-word);font-size:15px;color:var(--ink2)}
+.card ul{margin:2px 0 0;padding-left:16px;font-size:13px;color:var(--ink2)}
+.card ul li{margin:2px 0}
+.card .foot{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:auto;padding-top:6px}
+.price{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink2)}
+.price input{width:96px;padding:3px 6px;border:0;border-bottom:1px solid var(--ink);background:transparent;font-family:var(--f-label);font-size:14px;text-align:right;font-variant-numeric:tabular-nums}
+.price input:focus{outline:none;background:var(--paper2)}
+.ref{font-family:var(--f-label);font-size:12px;color:var(--good)}
+.del{position:absolute;top:8px;right:10px;border:0;background:none;color:var(--ink2);font-size:15px;line-height:1}
+.empty{border:1px dashed var(--rule);border-radius:6px;padding:16px;color:var(--ink2);font-size:13px;background:repeating-linear-gradient(-45deg,transparent 0 8px,rgba(0,0,0,.015) 8px 16px)}
+details.add{margin-top:12px}
+details.add summary{cursor:pointer;font-size:13px;color:var(--ink2);list-style:none}
+details.add summary::before{content:"＋ "}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-top:8px;padding:12px;border:1px solid var(--rule);border-radius:6px;background:var(--paper2)}
+.form input,.form select{width:100%;padding:6px 8px;border:1px solid var(--rule);border-radius:4px;background:var(--paper)}
+.pick{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;cursor:pointer}
+.pick input{accent-color:var(--ink)}
+
+/* shopping */
+.list{list-style:none;margin:0;padding:0}
+.list li{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--rule2)}
+.list label{display:flex;align-items:center;gap:10px;flex:1;min-width:0;cursor:pointer}
+.list input[type=checkbox]{appearance:none;flex:none;width:16px;height:16px;border-radius:50%;border:1.5px solid var(--ink);margin:0;display:grid;place-items:center}
+.list input[type=checkbox]:checked{background:var(--ink)}
+.list input[type=checkbox]:checked::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--paper)}
+.list .nm{min-width:0}
+.list .nm small{display:block;font-family:var(--f-label);font-size:11px;color:var(--ink2);letter-spacing:.04em}
+.list li.done .nm>span{text-decoration:line-through;color:var(--ink2)}
+.list .yen{font-family:var(--f-label);font-variant-numeric:tabular-nums;font-size:13.5px;white-space:nowrap}
+
+/* budget */
+table.bud{width:100%;border-collapse:collapse;font-size:13.5px}
+.bud th{font-family:var(--f-label);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink2);font-weight:400;text-align:right;padding:6px 6px;border-bottom:1.5px solid var(--ink)}
+.bud th:first-child{text-align:left}
+.bud td{padding:7px 6px;border-bottom:1px solid var(--rule2);text-align:right;font-family:var(--f-label);font-variant-numeric:tabular-nums;vertical-align:middle}
+.bud td:first-child{text-align:left;font-family:var(--f-ko)}
+.bud td small{display:block;color:var(--ink2);font-size:11.5px;font-family:var(--f-ko)}
+.bud input{width:84px;padding:3px 5px;border:0;border-bottom:1px solid var(--rule);background:transparent;text-align:right;font-family:var(--f-label);font-variant-numeric:tabular-nums}
+.bud input.q{width:40px}
+.bud input:focus{outline:none;border-bottom-color:var(--ink);background:var(--paper2)}
+.bud tr.grp td{padding-top:16px;font-family:var(--f-label);font-size:10.5px;letter-spacing:.18em;color:var(--ink2);text-transform:uppercase;border-bottom:1px solid var(--rule)}
+.tot{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:16px 0 6px}
+.tot div{border:1px solid var(--rule);border-radius:6px;padding:12px 14px}
+.tot b{display:block;font-family:var(--f-title);font-size:24px;font-weight:500;font-variant-numeric:tabular-nums;line-height:1.2}
+.tot div.main{border-color:var(--ink);background:var(--ink);color:var(--paper)}
+.tot div.main .lbl{color:#bdb8b0}
+.rate{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2);flex-wrap:wrap}
+.rate input{width:64px;padding:3px 5px;border:0;border-bottom:1px solid var(--ink);background:transparent;text-align:right;font-family:var(--f-label)}
+footer{padding:16px 30px 24px;border-top:1px solid var(--rule);font-size:12px;color:var(--ink2)}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);opacity:0;background:var(--ink);color:var(--paper);padding:8px 16px;border-radius:999px;font-size:13px;transition:.3s;pointer-events:none;z-index:50}
+.toast.on{opacity:1;transform:translateX(-50%)}
+@media (max-width:640px){
+  body{padding-left:0;padding-right:0;padding-top:0}
+  .book{border-radius:0}
+  .bhead{padding:18px 18px 12px}.logo{font-size:28px}
+  nav.tabs{padding:0 8px} nav.tabs a{padding:12px 9px 10px;letter-spacing:.1em}
+  
+  main{padding:4px 16px 30px}
+  .day,.week{grid-template-columns:1fr;gap:6px}
+  .dcol{display:flex;align-items:baseline;gap:10px}
+  .dcol .num{font-size:28px}
+  .stops::before{left:44px}.stops li{grid-template-columns:38px 1fr;gap:14px}.stops li::before{left:41px}
+  .bud input{width:70px}.bud input.q{width:32px}
+  .bud th:nth-child(3),.bud td:nth-child(3){display:none}
+  footer{padding:14px 16px 22px}
+}
+</style>
+</head>
+<body>
+<div class="book">
+  <header class="bhead">
+    <div>
+      <h1 class="logo">Kansai <i>Notebook</i></h1>
+      <div class="sub">채림언니랑 간사이 · 2027. 1. 11 — 1. 21</div>
+    </div>
+    <div class="sync" id="sync" style="display:none"><span class="d"></span><span id="syncT">연결 중…</span></div>
+  </header>
+  <nav class="tabs" id="tabs">
+    <a href="#w"><span>오사카 주간</span></a>
+    <a href="#d17"><span>1/17 일</span></a><a href="#d18"><span>1/18 월</span></a><a href="#d19"><span>1/19 화</span></a><a href="#d20"><span>1/20 수</span></a><a href="#d21"><span>1/21 목</span></a>
+    <a href="#places"><span>장소</span></a><a href="#stay"><span>숙소</span></a><a href="#shop"><span>쇼핑</span></a><a href="#budget"><span>예산</span></a>
+  </nav>
+  <main>
+    <section class="view" id="v-w"></section><section class="view" id="v-d17"></section><section class="view" id="v-d18"></section><section class="view" id="v-d19"></section><section class="view" id="v-d20"></section><section class="view" id="v-d21"></section>
+    <section class="view" id="v-places"></section>
+    <section class="view" id="v-stay"></section>
+    <section class="view" id="v-shop"></section>
+    <section class="view" id="v-budget"></section>
+  </main>
+  <footer>가격·시간은 2026년 10월 기준 조사값이라 바뀔 수 있어요 (특히 1월 시즌 메뉴·숙박료). 입력한 가격·체크·추가한 장소는 이 기기에만 저장돼요.</footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const yen=n=>"¥"+Math.round(n).toLocaleString("ko-KR");
+const won=n=>Math.round(n).toLocaleString("ko-KR")+"원";
+const gm=q=>"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(q);
+const dir=(a,b,mode="transit")=>`https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(a)}&destination=${encodeURIComponent(b)}&travelmode=${mode}`;
+function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(toast._t);toast._t=setTimeout(()=>e.classList.remove("on"),1600)}
+
+/* ---------- content ---------- */
+const CAT={
+  cafe:{c:"#b3263c",l:"카페·디저트"}, food:{c:"#d0655a",l:"맛집"}, beauty:{c:"#8c7a5b",l:"헤어"},
+  shop:{c:"#4f7d5c",l:"쇼핑"}, sight:{c:"#4b6b8a",l:"구경"}, onsen:{c:"#b26a26",l:"온천"},
+  hotel:{c:"#1d1c1a",l:"숙소"}, base:{c:"#8f8a82",l:"멘토링"}
+};
+const CITIES=[["osaka","Osaka","오사카"],["nara","Nara","나라"],["kyoto","Kyoto","교토"],["arima","Arima","아리마 온천"],["kobe","Kobe","고베"]];
+
+const PLACES=[
+ {id:"newme",city:"osaka",cat:"beauty",name:"HAIR MAKE SALON new me",jp:"ヘアメイクサロン ニューミー · 히가시신사이바시",lat:34.6720,lng:135.5045,v:"m",
+  info:["평일 16시 이후 15분 헤어세트 쿠폰 ¥1,300~ (주말·시간 외는 가격 다름 → 예약 전 문의)","신사이바시역 6번 출구 도보 약 5분 · 永弘(에이코)빌딩 5층","예약은 핫페퍼뷰티로","TIP: 원하는 스타일 사진 몇 장 가져가서 그날 옷·메이크업에 맞게 추천받기"],
+  ref:"¥1,300~/인",q:"HAIR MAKE SALON new me 東心斎橋",links:[["인스타","https://www.instagram.com/newme_hm/"],["핫페퍼 예약","https://beauty.hotpepper.jp/slnH000663055/"]]},
+ {id:"lupra",city:"osaka",cat:"cafe",name:"喫茶ルプラ (킷사 루프라)",jp:"Kissa Lupra · 우에혼마치",lat:34.6680,lng:135.5258,v:"m",
+  info:["1974년부터 이어진 레트로 킷사텐 · 자가배전 커피","대표 메뉴: 수제 커스터드 푸딩 (위에 캐러멜 빙수가 올라감)","오므라이스는 15:30부터 주문 가능","⚠️ 일요일·공휴일 휴무 → 평일 저녁이나 토요일에","킨테츠 오사카우에혼마치역 도보 약 5분 / JR 츠루하시역 도보 약 7분"],
+  ref:"푸딩 ¥350 전후",q:"喫茶ルプラ 大阪",links:[["인스타","https://www.instagram.com/lupra_coffee/"]]},
+ {id:"dotonbori",city:"osaka",cat:"sight",name:"도톤보리 · 글리코 간판",jp:"道頓堀",lat:34.6687,lng:135.5013,v:"m",lo:[-13,-10,"end"],info:["헤어세트 하고 야경 사진 찍기 좋은 곳"],q:"道頓堀 グリコサイン"},
+ {id:"donki",city:"osaka",cat:"shop",name:"돈키호테 도톤보리점",jp:"ドン・キホーテ 道頓堀店",lat:34.6689,lng:135.5030,v:"",info:["멘토링 주간 저녁에 털기","여권 챙기면 면세"],q:"ドン・キホーテ 道頓堀店"},
+ {id:"okis",city:"osaka",cat:"base",name:"OKIS 멘토링",jp:"大阪金剛インターナショナル小中高 · 난코 (위치 대략)",lat:34.6300,lng:135.4180,v:"m",info:["1/11(월)–1/16(토) OK팀 멘토링 · 저녁 자유","신사이바시·난바까지 지하철 주오선→미도스지선 환승"],q:"大阪金剛インターナショナル中学校・高等学校"},
+ {id:"narapark",city:"nara",cat:"sight",name:"나라공원 · 사슴",jp:"奈良公園",lat:34.6851,lng:135.8430,v:"k",lo:[12,22,"start"],info:["사슴 센베이 사서 주기 (인사하는 사슴들)","킨테츠나라역에서 걸어서 바로"],q:"奈良公園"},
+ {id:"todaiji",city:"nara",cat:"sight",name:"도다이지 대불전",jp:"東大寺 大仏殿",lat:34.6890,lng:135.8398,v:"k",lo:[-13,-10,"end"],info:["엄청 큰 청동 불상 · 나라 오면 꼭 보는 곳","입장료 있음"],q:"東大寺 大仏殿"},
+ {id:"gion",city:"kyoto",cat:"sight",name:"기온 · 하나미코지 거리",jp:"祇園 花見小路",lat:35.0037,lng:135.7750,v:"k",info:["첫날 저녁 산책 코스","교토에서 가고 싶은 곳(디저트·카페) 생기면 아래 ＋로 추가!"],q:"祇園 花見小路"},
+ {id:"kinnoyu",city:"arima",cat:"onsen",name:"킨노유 (금탕 공중탕)",jp:"金の湯",lat:34.7966,lng:135.2477,v:"k",info:["적갈색 금천 공중탕","료칸 체크인 전 온천거리 산책하면서"],q:"有馬温泉 金の湯"},
+ {id:"kitano",city:"kobe",cat:"sight",name:"기타노 이진칸 거리",jp:"北野異人館街",lat:34.7005,lng:135.1905,v:"k",lo:[-13,-10,"end"],info:["옛 서양식 저택 거리 · 사진 스팟"],q:"北野異人館街"},
+ {id:"meriken",city:"kobe",cat:"sight",name:"메리켄파크 · 하버랜드",jp:"メリケンパーク",lat:34.6823,lng:135.1866,v:"k",lo:[12,22,"start"],info:["항구 산책 · 포트타워"],q:"メリケンパーク"},
+ {id:"kobebeef",city:"kobe",cat:"food",name:"고베규 런치",jp:"가게 미정 · 산노미야 주변",info:["점심 런치 세트가 저녁보다 훨씬 쌈","가게 정해지면 가격 넣기"],q:"神戸牛 ランチ 三宮"}
+];
+
+const STAYS=[
+ {g:"kyoto",title:"교토 2박",when:"1/17(일)–1/19(화)",unit:"1박·1실",mult:2,multL:"× 2박",lat:34.9858,lng:135.7588,
+  list:[], empty:"아직 후보 없음 — 교토역 근처면 다음날 아리마 버스 타기 편해 (교토역 하치조구치 출발)."},
+ {g:"arima",title:"아리마 료칸 1박",when:"1/19(화)",unit:"1인·1박2식",mult:2,multL:"× 2명",
+  intro:"1박2식 = 저녁(가이세키) + 다음날 아침. 점심은 미포함. 평일(화)이라 주말보다 쌈. 목표: 1인 10~15만원 ≈ ¥12,000~17,500.",
+  list:[
+   {id:"kamiobo",name:"上大坊 (카미오보)",info:["역 근처 · 덴만구 원천 금천탕","전통 가이세키 저녁"],ref:"≈¥12,012~/인",q:"上大坊 有馬温泉"},
+   {id:"ryusenkaku",name:"元湯 龍泉閣 (모토유 류센카쿠)",info:["24시간 금천탕 · 실내 풀","식사 포함 플랜인지 확인"],ref:"≈¥14,630~/인",q:"元湯 龍泉閣"},
+   {id:"koki",name:"湯屋の宿 康貴 (유야노야도 코키)",info:["성인 전용 15실 · 2018 오픈","예약제 전세탕 4곳 (둘이 쓰기 좋음)"],ref:"≈¥15,246~/인",q:"湯屋の宿 康貴"},
+   {id:"zuihoen",name:"有馬瑞宝園 (아리마 즈이호엔)",info:["은천 온천 + 사우나","1박2식 1만엔대 플랜 있음 (예전 무료 특전은 일부 종료)"],ref:"1박2식 1만엔대~",q:"有馬瑞宝園"},
+   {id:"kamenoi",name:"亀の井ホテル 有馬",info:["자가원천 금천 · 고베규 회석","야식 라멘 무료 · 2025 리뉴얼"],ref:"1박2식 ¥15,000~ 존",q:"亀の井ホテル 有馬"},
+   {id:"gyoen",name:"有馬御苑 (아리마 교엔)",info:["아리마온센역 도보 2분 · 금천+은천","고베규 · 가끔 1만엔대 플랜 뜸"],ref:"보통 ≈¥23,100~/인",q:"有馬御苑"}
+  ]},
+ {g:"osaka",title:"오사카 1박",when:"1/20(수)",unit:"1박·1실",mult:1,multL:"× 1박",
+  intro:"마지막 밤. 다음날 11:45 비행기(KIX T1)라 난바 근처가 최고.",
+  list:[
+   {id:"swiss",name:"후보 1 · 스위소텔 난카이 오사카 (추정)",info:["난카이 난바역 직결 → 라피트 타고 공항 약 38분","고층 시티뷰 · 쇼핑·관광 위치 좋음","※ 받은 아고다 링크로 정확한 호텔명 확인하기"],lat:34.6650,lng:135.5013,lo:[12,22,"start"],q:"スイスホテル南海大阪",links:[["아고다","https://www.agoda.com/partners/partnersearch.aspx?pcs=1&cid=1930680&hl=ko-kr&hid=45609"]]},
+   {id:"w",name:"후보 2 · W 오사카",info:["신사이바시역 3번 출구 도보 약 3분","27층 시티뷰 · 수영장(WET)은 이용료 따로 붙을 수 있음 → 예약 전 확인","요청사항에 “고층 배정 부탁드립니다”","공항 갈 땐 난바까지 이동해서 라피트"],lat:34.6772,lng:135.5003,q:"W Osaka",links:[["아고다","https://www.agoda.com/partners/partnersearch.aspx?pcs=1&cid=1930680&hl=ko-kr&hid=20664132"],["메리어트 공식","https://www.marriott.com/en-us/hotels/osaow-w-osaka/overview/"]]}
+  ]}
+];
+
+const DAISO=[
+ ["d1","헬로키티 페트병 오프너","4573135580250",110],
+ ["d2","헬로키티 빨대 페트병 캡","4573135578530",110],
+ ["d3","산리오 믹스 서머 베케이션 조리개 파우치","4580841640659",220],
+ ["d4","산리오 믹스 서머 베케이션 PVC백","4580841640703",330],
+ ["d5","헬로키티 휴대용 슬리퍼","4582364536464",330],
+ ["d6","헬로키티 트래블 지퍼백 세트","4582364539540",110]
+];
+const CONV=[
+ ["c1","세븐일레븐 말차 스무디","세븐카페 스무디 머신 · 말차는 시즌·수량 한정이라 1월에 없을 수도 → 그땐 다른 맛"],
+ ["c2","모찌뿌요 (もちぷよ)","⚠️ 세븐 말고 로손 상품!"],
+ ["c3","나메라카 푸딩 (なめらかプリン)","메이토 나메라카 푸딩이면 슈퍼·편의점 어디나"]
+];
+
+const DMAP={17:["34.6627,135.5016","34.685047,135.843012","34.6889851,135.8398158","34.9858,135.7588","35.0038355,135.7750189"],
+ 18:["34.9858,135.7588","35.0038355,135.7750189"],
+ 19:["34.9858,135.7588","34.7967975,135.2478857"],
+ 20:["34.7967975,135.2478857","34.7007283,135.1907906","34.6822937,135.1886448","34.6689189,135.5010687","34.6641574,135.5011441"],
+ 21:["34.6641574,135.5011441","34.4319994,135.2366019"],
+ w:["34.6300,135.4180","34.6720,135.5045","34.6689189,135.5010687","34.6680,135.5258"]};
+const emb=a=>"https://maps.google.com/maps?saddr="+a[0]+"&daddr="+a.slice(1).join("+to:")+"&dirflg=r&hl=ko&output=embed";
+const DAYS=[
+ {n:17,wd:"SUN 일",title:"오사카 → 나라 → 교토",sleep:"교토 1박",stops:[
+  {t:"11:00",n:"팀원들 귀국 · 우리 둘이 출발",x:"짐 챙겨서 킨테츠 난바역으로"},
+  {t:"오전",mv:1,n:"킨테츠 난바 → 킨테츠나라 (약 40분)",c:"약 ¥680/인",d:["大阪難波駅","近鉄奈良駅"]},
+  {t:"점심~",n:"나라공원 사슴 · 도다이지 대불",x:"짐은 킨테츠나라역 코인로커",p:"todaiji"},
+  {t:"저녁",mv:1,n:"킨테츠나라 → 교토 (특급 약 37분)",c:"¥1,280/인",d:["近鉄奈良駅","京都駅"]},
+  {t:"밤",n:"교토 체크인 · 기온 산책",p:"gion"}]},
+ {n:18,wd:"MON 월",title:"교토 하루 종일",sleep:"교토 2박째",stops:[
+  {t:"",todo:1,n:"교토 디저트 · 카페 · 명소",x:"가고 싶은 곳 생기면 ‘장소’ 탭에 추가! 1월은 비수기라 덜 붐비고 추움(대략 0~9℃)."}]},
+ {n:19,wd:"TUE 화",title:"교토 → 아리마 온천",sleep:"아리마 료칸",stops:[
+  {t:"오전",n:"교토 오전 구경 or 디저트 한 군데 더",todo:1},
+  {t:"오후",mv:1,n:"교토역 하치조구치 → 아리마온천 고속버스 (약 1시간 15분)",c:"¥2,000/인",x:"모바일 승차권 사전 예약 필요 · 환승 없음",d:["京都駅八条口","有馬温泉"]},
+  {t:"15시~",n:"료칸 체크인 · 킨노유 · 온천거리 산책",p:"kinnoyu"},
+  {t:"저녁",n:"료칸 가이세키 저녁 ♨"}]},
+ {n:20,wd:"WED 수",title:"아리마 → 고베 → 오사카",sleep:"오사카 1박",stops:[
+  {t:"아침",n:"료칸 아침 · 온천 한 번 더"},
+  {t:"오전",mv:1,n:"아리마 → 고베 산노미야 (약 30~45분)",d:["有馬温泉","三宮駅"],x:"버스 or 고베전철"},
+  {t:"점심",n:"고베규 런치 → 기타노 이진칸 → 메리켄파크",p:"kobebeef"},
+  {t:"저녁",mv:1,n:"고베산노미야 → 오사카난바 (한신선 직통)",d:["神戸三宮駅","大阪難波駅"]},
+  {t:"밤",n:"오사카 호텔 체크인 · 마지막 밤 도톤보리",p:"dotonbori"}]},
+ {n:21,wd:"THU 목",title:"귀국",sleep:"—",stops:[
+  {t:"~08:30",n:"체크아웃 → 난카이 난바역"},
+  {t:"09:00쯤",mv:1,n:"라피트 → 간사이공항 (약 38분)",c:"¥1,490/인",x:"라피트 내리면 바로 제1터미널(T1) 연결",d:["なんば駅","関西空港駅"]},
+  {t:"~09:45",n:"간사이공항 제1터미널(T1) · 파라타항공 체크인",x:"국제선 2시간 전 도착 권장 · 카운터 번호는 당일 공항 전광판에서 확인"},
+  {t:"11:45",n:"✈︎ 파라타항공 WE512 · 간사이(KIX) → 인천(ICN)",x:"13:45 인천공항 제1터미널(T1) 도착 · 약 2시간 비행"}]}
+];
+
+const BUDGET=[
+ ["숙박",[
+  {id:"stay_kyoto",label:"교토 2박",stay:"kyoto"},
+  {id:"stay_arima",label:"아리마 료칸 (1박2식)",stay:"arima"},
+  {id:"stay_osaka",label:"오사카 1박",stay:"osaka"}]],
+ ["교통",[
+  {id:"t1",label:"난바 → 나라",p:null,q:2,hint:"약 ¥680/인"},
+  {id:"t2",label:"나라 → 교토 (킨테츠 특급)",p:1280,q:2},
+  {id:"t3",label:"교토 → 아리마 (고속버스)",p:2000,q:2},
+  {id:"t4",label:"아리마 → 산노미야",p:null,q:2,hint:"타기 전 확인"},
+  {id:"t5",label:"산노미야 → 난바 (한신)",p:null,q:2,hint:"타기 전 확인"},
+  {id:"t6",label:"교토·고베 시내 버스/지하철",p:null,q:2},
+  {id:"t7",label:"난바 → 간사이공항 (라피트)",p:1490,q:2}]],
+ ["먹고 놀기",[
+  {id:"e1",label:"new me 헤어세트",p:1300,q:2,hint:"평일 16시 이후 쿠폰가"},
+  {id:"e2",label:"킷사 루프라",p:null,q:2},
+  {id:"e3",label:"교토 디저트 투어",p:null,q:2},
+  {id:"e4",label:"고베규 런치",p:null,q:2},
+  {id:"e5",label:"도다이지 입장료",p:null,q:2},
+  {id:"e6",label:"다이소 키티템",p:1210,q:1},
+  {id:"e7",label:"편의점 미션",p:null,q:1}]]
+];
+
+/* ---------- shared state ---------- */
+let DB=null, VALS={}, ITEMS={}, writable=true;
+const LS="kansai-notebook-v1";
+function loadLocal(){try{const o=JSON.parse(localStorage.getItem(LS)||"{}");VALS=o.v||{};ITEMS=o.i||{}}catch(e){}}
+function saveLocal(){try{localStorage.setItem(LS,JSON.stringify({v:VALS,i:ITEMS}))}catch(e){}}
+const V=(k,d)=>(k in VALS && VALS[k]!==null && VALS[k]!=="")?VALS[k]:d;
+const pend={}, busy={};
+function setV(k,v){
+  VALS[k]=v; refresh();
+  if(!DB){saveLocal();return}
+  clearTimeout(pend[k]); pend[k]=setTimeout(()=>flush(k),450);
+}
+async function flush(k){
+  if(busy[k]){pend[k]=setTimeout(()=>flush(k),300);return}
+  delete pend[k];
+  busy[k]=true;
+  try{await DB.doc("vals/"+k).set({v:VALS[k]??null,t:Date.now()})}
+  catch(e){ if(e&&e.code==="invalid_argument"){writable=false;setSync("off","보기 전용이라 저장 안 돼요")} else toast("저장 실패 — 다시 해볼래?") }
+  finally{busy[k]=false}
+}
+async function addItem(o){
+  o.t=Date.now();
+  if(DB){try{await DB.collection("items").add(o)}catch(e){toast(e&&e.code==="invalid_argument"?"보기 전용이라 추가 안 돼요":"추가 실패")}}
+  else{const id="l"+o.t;ITEMS[id]=o;saveLocal();renderAll()}
+}
+async function delItem(id){
+  if(DB){try{await DB.doc("items/"+id).delete()}catch(e){toast("삭제 실패")}}
+  else{delete ITEMS[id];saveLocal();renderAll()}
+}
+function setSync(cls,t){const s=$("#sync");s.className="sync "+cls;$("#syncT").textContent=t}
+
+/* ---------- render: plan ---------- */
+function stopHTML(s){
+  const P=s.p&&PLACES.find(x=>x.id===s.p);
+  const links=[];
+  if(s.d) links.push(`<a class="btn sm" href="${dir(s.d[0],s.d[1])}" target="_blank" rel="noopener">구글맵 길찾기 ↗</a>`);
+  if(P) links.push(`<a class="btn sm ghost" href="${gm(P.q)}" target="_blank" rel="noopener">${esc(P.name.split(" (")[0])} 지도 ↗</a>`);
+  return `<li class="${s.mv?"mv":""} ${s.todo?"todo":""}"><div class="t">${esc(s.t)}</div><div>
+    <div class="n">${esc(s.n)}${s.c?`<span class="c">${esc(s.c)}</span>`:""}</div>
+    ${s.x?`<div class="x">${esc(s.x)}</div>`:""}
+    ${links.length?`<div class="ln">${links.join("")}</div>`:""}</div></li>`;
+}
+function renderPlan(){
+  const pickName=g=>{const id=V("pick_"+g,null);if(!id)return null;const S=STAYS.find(s=>s.g===g);const c=[...S.list,...custom("stay",g)].find(c=>c.id===id);return c&&c.name};
+  const sleepTxt=d=>{const m={"교토 1박":"kyoto","교토 2박째":"kyoto","아리마 료칸":"arima","오사카 1박":"osaka"}[d.sleep];const nm=m&&pickName(m);return `<span class="sleep">🛏 <b>${esc(d.sleep)}</b>${nm?` · ${esc(nm)}`:""}</span>`};
+  const W=`
+  <div class="ph"><h2>일정 <small>Nara · Kyoto · Arima · Kobe</small></h2><span class="chip soft">오사카 월–토 → 일–목 간사이 한 바퀴</span></div>
+  <div class="week">
+    <div class="dcol"><div class="num">11<small>–16</small></div><div class="wd">MON–SAT</div></div>
+    <div>
+      <div class="dhead"><h3>오사카 · OKIS 멘토링 주간</h3><span class="sleep">저녁 자유시간에 오사카 털기</span></div>
+      <div class="x" style="font-size:13px;color:var(--ink2)">헤어세트 쿠폰이 <mark>평일 16시 이후</mark>라 이 주간이 딱이야. 루프라는 일·공휴일 휴무라 평일 저녁이나 토요일에.</div>
+      <div class="mission">
+        <a class="btn sm" href="#places" data-go="newme">💇‍♀️ new me 헤어세트</a>
+        <a class="btn sm" href="#places" data-go="lupra">🍮 킷사 루프라</a>
+        <a class="btn sm" href="#shop">🎀 다이소 키티템</a>
+        <a class="btn sm" href="#shop">🏪 편의점 미션</a>
+        <a class="btn sm" href="#places" data-go="donki">🛍 돈키호테</a>
+      </div>
+    </div>
+  </div>
+  <iframe class="gmap" loading="lazy" src="${emb(DMAP.w)}" title="오사카 지도"></iframe>`;
+  $("#v-w").innerHTML=W;
+  DAYS.forEach(d=>{$("#v-d"+d.n).innerHTML=`<div class="day">
+    <div class="dcol"><div class="num">1.${d.n}</div><div class="wd">${d.wd}</div></div>
+    <div><div class="dhead"><h3>${esc(d.title)}</h3>${d.sleep!=="—"?sleepTxt(d):""}</div>
+    <iframe class="gmap" loading="lazy" src="${emb(DMAP[d.n])}" title="1/${d.n} 구글맵"></iframe>
+    <ul class="stops">${d.stops.map(stopHTML).join("")}</ul></div></div>`});
+}
+
+/* ---------- render: map ---------- */
+let mapView="k", selPin=null;
+const BOX={k:{lng0:135.06,lng1:135.95,lat0:34.39,lat1:35.06},m:{lng0:135.398,lng1:135.545,lat0:34.618,lat1:34.694}};
+function proj(v){const b=BOX[v],W=1000,k=Math.cos((b.lat0+b.lat1)/2*Math.PI/180),H=Math.round(W*(b.lat1-b.lat0)/((b.lng1-b.lng0)*k));
+  return {W,H,p:(lat,lng)=>[+((lng-b.lng0)/(b.lng1-b.lng0)*W).toFixed(1),+((b.lat1-lat)/(b.lat1-b.lat0)*H).toFixed(1)]}}
+const STN={k:[["간사이공항",34.4320,135.2304,"関西国際空港"],["난바",34.6627,135.5016,"なんば駅"],["우메다",34.7025,135.4959,"大阪梅田駅"],["교토역",34.9858,135.7588,"京都駅"],["산노미야",34.6946,135.1955,"三宮駅"]],
+ m:[["난바",34.6627,135.5016,"なんば駅",[-9,14,"end"]],["신사이바시",34.6748,135.5006,"心斎橋駅",[-9,4,"end"]],["혼마치",34.6822,135.4986,"本町駅",[-9,4,"end"]],["오사카우에혼마치",34.6648,135.5208,"大阪上本町駅"],["츠루하시",34.6656,135.5303,"鶴橋駅",[0,-10,"middle"]],["코스모스퀘어",34.6386,135.4147,"コスモスクエア駅"],["오사카코",34.6545,135.4335,"大阪港駅"]]};
+function allPins(v){
+  const out=[];
+  PLACES.forEach(p=>{if(p.lat&&(p.v===v||(v==="k"&&p.city==="osaka"&&false)))out.push({id:p.id,cat:p.cat,name:p.name.split(" (")[0].split(" · ")[0],lat:p.lat,lng:p.lng,lo:p.lo,ref:p})});
+  STAYS.forEach(s=>s.list.forEach(h=>{if(h.lat&&v==="m")out.push({id:h.id,cat:"hotel",name:h.name.replace(/^후보 \d · /,"").replace(" (추정)",""),lat:h.lat,lng:h.lng,lo:h.lo,ref:h,stay:1})}));
+  return out;
+}
+function renderMap(){
+  const {W,H,p}=proj(mapView);const pts=a=>a.map(([la,ln])=>p(la,ln).join(",")).join(" ");
+  let deco="";
+  if(mapView==="k"){
+    deco+=`<polygon points="${pts([[34.635,135.06],[34.66,135.12],[34.683,135.19],[34.712,135.29],[34.706,135.385],[34.665,135.425],[34.60,135.452],[34.53,135.432],[34.462,135.37],[34.412,135.31],[34.39,135.28],[34.39,135.06]])}" fill="var(--water)"/>`;
+    deco+=`<polygon points="${pts([[35.06,135.885],[35.03,135.87],[35.0,135.875],[35.01,135.905],[35.05,135.93],[35.06,135.93]])}" fill="var(--water)"/>`;
+    const [kx,ky]=p(34.432,135.232);deco+=`<rect x="${kx-22}" y="${ky-10}" width="44" height="20" rx="5" fill="#f7f5f0" stroke="var(--rule)"/>`;
+    const lab=(t,la,ln,c="area")=>{const [x,y]=p(la,ln);return `<text class="mlabel ${c}" x="${x}" y="${y}" text-anchor="middle">${t}</text>`};
+    deco+=lab("Osaka Bay",34.55,135.26)+lab("Rokko",34.765,135.23)+lab("Lake Biwa",35.045,135.86)+lab("OSAKA",34.71,135.56)+lab("KYOTO",35.03,135.70)+lab("NARA",34.72,135.86)+lab("KOBE",34.665,135.15);
+    // route
+    const R=[[34.6627,135.5016],[34.6840,135.8270],[34.9858,135.7588],[34.8010,135.2440],[34.6946,135.1955],[34.6627,135.5016],[34.4320,135.2304]];
+    const RP=R.map(([a,b])=>p(a,b));
+    let path="";for(let i=0;i<RP.length-1;i++){const [x1,y1]=RP[i],[x2,y2]=RP[i+1];const mx=(x1+x2)/2,my=(y1+y2)/2,dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy)||1,o=Math.min(60,L*.18);path+=`<path d="M${x1},${y1} Q${mx-dy/L*o},${my+dx/L*o} ${x2},${y2}" fill="none" stroke="var(--hot)" stroke-width="2" stroke-dasharray="6 6" opacity=".75" marker-end="url(#ar)"/>`;
+      const tag=["1/17","1/17","1/19","1/20","1/20","1/21"][i];const tx=mx-dy/L*o*0.55,ty=my+dx/L*o*0.55;path+=`<g><rect x="${tx-19}" y="${ty-10}" width="38" height="19" rx="9.5" fill="var(--paper)" stroke="var(--hot)"/><text x="${tx}" y="${ty+4}" text-anchor="middle" font-family="Jost" font-size="11" fill="var(--hot)">${tag}</text></g>`}
+    deco+=path;
+  } else {
+    deco+=`<polygon points="${pts([[34.694,135.398],[34.694,135.432],[34.672,135.446],[34.656,135.442],[34.642,135.448],[34.618,135.452],[34.618,135.398]])}" fill="var(--water)"/>`;
+    deco+=`<polygon points="${pts([[34.646,135.404],[34.646,135.426],[34.633,135.434],[34.618,135.433],[34.618,135.402]])}" fill="#f7f5f0" stroke="var(--rule)"/>`;
+    deco+=`<polyline points="${pts([[34.6687,135.4935],[34.6687,135.5085]])}" stroke="var(--water)" stroke-width="7" fill="none"/>`;
+    deco+=`<polyline points="${pts([[34.694,135.4997],[34.6627,135.5016]])}" stroke="#c9c4bb" stroke-width="4" fill="none"/>`;
+    deco+=`<polyline points="${pts([[34.6822,135.4986],[34.682,135.483],[34.669,135.461],[34.6545,135.4335],[34.6386,135.4147]])}" stroke="#c9c4bb" stroke-width="3" stroke-dasharray="7 5" fill="none"/>`;
+    deco+=`<polyline points="${pts([[34.6667,135.5063],[34.6648,135.5208],[34.6656,135.5303]])}" stroke="#c9c4bb" stroke-width="3" fill="none"/>`;
+    const lab=(t,la,ln,c="area",a="middle")=>{const [x,y]=p(la,ln);return `<text class="mlabel ${c}" x="${x}" y="${y}" text-anchor="${a}">${t}</text>`};
+    deco+=lab("Osaka Bay",34.672,135.415)+lab("미도스지선",34.689,135.503,"st","start")+lab("주오선 → 코스모스퀘어",34.663,135.462,"st","middle")+lab("도톤보리 강",34.6668,135.4935,"st","end")+lab("MINAMI",34.684,135.525);
+  }
+  const st=STN[mapView].map(([n,la,ln,q,o])=>{const [x,y]=p(la,ln);o=o||[9,16,"start"];return `<a href="${gm(q)}" target="_blank" rel="noopener"><rect x="${x-5}" y="${y-5}" width="10" height="10" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.5"/><text class="mlabel st" x="${x+o[0]}" y="${y+o[1]}" text-anchor="${o[2]}">${n}</text></a>`}).join("");
+  const pins=allPins(mapView).map(o=>{const [x,y]=p(o.lat,o.lng);const c=CAT[o.cat].c;return `<g class="pin ${selPin===o.id?"sel":""}" data-pin="${o.id}" tabindex="0" role="button" aria-label="${esc(o.name)}">
+     <circle class="ring" cx="${x}" cy="${y}" r="17" fill="none" stroke="${c}" stroke-width="1.5" opacity="0"/>
+     <circle class="dot" cx="${x}" cy="${y}" r="8.5" fill="${c}" stroke="#fff" stroke-width="2.5" style="transition:r .2s"/>
+     <text class="mlabel" style="pointer-events:none" x="${x+(o.lo?o.lo[0]:13)}" y="${y+(o.lo?o.lo[1]:-9)}" text-anchor="${o.lo?o.lo[2]:"start"}">${esc(o.name)}</text></g>`}).join("");
+  const legend=Object.entries(CAT).filter(([k])=>allPins(mapView).some(o=>o.cat===k)).map(([k,o])=>`<span><i class="cat" style="background:${o.c}"></i>${o.l}</span>`).join("")+`<span><i class="cat" style="background:var(--paper);border:1.5px solid var(--ink);border-radius:0"></i>역</span>${mapView==="k"?`<span style="color:var(--hot)">┅ 우리 동선</span>`:""}`;
+  $("#v-map").innerHTML=`
+   <div class="ph"><h2>지도 <small>약도 · 핀 누르면 구글맵</small></h2></div>
+   <div class="mapbar"><div class="seg" role="group"><button data-mv="k" aria-pressed="${mapView==="k"}">간사이 한 바퀴</button><button data-mv="m" aria-pressed="${mapView==="m"}">오사카 미나미</button></div><div class="legend">${legend}</div></div>
+   <div class="mapwrap"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="지도">
+     <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,1 L9,5 L0,9" fill="none" stroke="var(--hot)" stroke-width="1.5"/></marker>
+     <pattern id="g" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M50 0H0V50" fill="none" stroke="#ece9e3" stroke-width="1"/></pattern></defs>
+     <rect width="${W}" height="${H}" fill="url(#g)"/>${deco}${st}${pins}</svg></div>
+   <div class="mdetail" id="mdetail">${detailHTML()}</div>
+   <p class="note">위치는 대략적인 약도야. 정확한 위치·길찾기는 핀 정보의 <b>구글맵</b> 버튼으로 열고, 구글맵에서 ☆ 저장 누르면 저장장소에 들어가.</p>`;
+}
+function detailHTML(){
+  if(!selPin) return `<p>핀을 눌러봐. ${mapView==="k"?"빨간 점선이 1/17 → 1/21 동선이야.":"멘토링 주간에 다닐 오사카 스팟 + 마지막 날 호텔 후보."}</p>`;
+  const o=allPins(mapView).find(x=>x.id===selPin);if(!o)return"";const r=o.ref;
+  return `<span class="lbl"><i class="cat" style="background:${CAT[o.cat].c}"></i>${CAT[o.cat].l}</span><h4>${esc(r.name)}</h4>${r.jp?`<p>${esc(r.jp)}</p>`:""}${(r.info||[]).slice(0,3).map(t=>`<p>· ${esc(t)}</p>`).join("")}
+   <div class="ln" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><a class="btn sm solid" href="${gm(r.q)}" target="_blank" rel="noopener">구글맵 ↗</a><a class="btn sm" href="#${o.stay?"stay":"places"}" data-go="${o.id}">자세히</a></div>`;
+}
+
+/* ---------- render: places ---------- */
+function custom(kind,group){return Object.entries(ITEMS).filter(([,o])=>o&&o.kind===kind&&o.group===group).sort((a,b)=>(a[1].t||0)-(b[1].t||0)).map(([id,o])=>({id,custom:1,...o}))}
+function priceBox(key,label="가격"){return `<label class="price">${label} ¥<input inputmode="numeric" data-k="${key}" placeholder="입력"></label>`}
+function placeCard(p){
+  const L=(p.links||[]).map(([t,u])=>`<a class="btn sm ghost" href="${esc(u)}" target="_blank" rel="noopener">${esc(t)} ↗</a>`).join("");
+  return `<article class="card" id="c-${p.id}">${p.custom?`<button class="del" data-del="${p.id}" title="삭제">×</button>`:""}
+   <span class="lbl"><i class="cat" style="background:${(CAT[p.cat]||CAT.sight).c}"></i>${(CAT[p.cat]||CAT.sight).l}</span>
+   <h4>${esc(p.name)}</h4>${p.jp?`<div class="jp">${esc(p.jp)}</div>`:""}
+   ${p.info&&p.info.length?`<ul>${p.info.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:""}
+   ${p.memo?`<ul><li>${esc(p.memo)}</li></ul>`:""}
+   <div class="foot">${p.ref?`<span class="ref">참고 ${esc(p.ref)}</span>`:""}${priceBox("pp_"+p.id)}<span style="flex:1"></span>
+   <a class="btn sm solid" href="${p.link?esc(p.link):gm(p.q||p.name)}" target="_blank" rel="noopener">${p.link?"링크":"구글맵"} ↗</a>${L}</div></article>`;
+}
+function addForm(kind,group,ph){
+  return `<details class="add"><summary>${ph}</summary><form class="form" data-add="${kind}" data-group="${group}">
+   <input name="name" placeholder="이름 (구글맵에 검색될 이름)" required>
+   ${kind==="place"?`<select name="cat">${Object.entries(CAT).filter(([k])=>!["hotel","base"].includes(k)).map(([k,o])=>`<option value="${k}">${o.l}</option>`).join("")}</select>`:""}
+   <input name="memo" placeholder="메모 (선택)">
+   <input name="link" placeholder="링크 (선택)">
+   <input name="price" inputmode="numeric" placeholder="${kind==="stay"?"가격 ¥":"가격 ¥ (선택)"}">
+   <button class="btn solid" type="submit">추가</button></form></details>`;
+}
+function renderPlaces(){
+  $("#v-places").innerHTML=`<div class="ph"><h2>장소 <small>가고 싶은 곳</small></h2><span class="chip soft">가격 칸은 둘 다 수정 가능</span></div>`+
+   CITIES.map(([k,en,ko])=>{const L=[...PLACES.filter(p=>p.city===k),...custom("place",k)];
+    return `<div class="city"><h3>${ko} <small>${en}</small></h3><div class="grid2">${L.map(placeCard).join("")||`<div class="empty">아직 없음</div>`}</div>${addForm("place",k,`${ko}에 장소 추가`)}</div>`}).join("");
+}
+
+/* ---------- render: stay ---------- */
+function stayCard(S,h){
+  const picked=V("pick_"+S.g,null)===h.id;
+  const L=(h.links||[]).map(([t,u])=>`<a class="btn sm ghost" href="${esc(u)}" target="_blank" rel="noopener">${esc(t)} ↗</a>`).join("");
+  return `<article class="card ${picked?"picked":""}" id="c-${h.id}">${h.custom?`<button class="del" data-del="${h.id}" title="삭제">×</button>`:""}
+   <h4>${esc(h.name)}</h4>
+   ${h.info?`<ul>${h.info.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:""}${h.memo?`<ul><li>${esc(h.memo)}</li></ul>`:""}
+   <div class="foot">${h.ref?`<span class="ref">참고 ${esc(h.ref)}</span>`:""}${priceBox("hp_"+h.id,S.unit)}</div>
+   <div class="foot"><label class="pick"><input type="radio" name="pick_${S.g}" data-pick="${S.g}" value="${h.id}" ${picked?"checked":""}> 여기로 할래</label><span style="flex:1"></span>
+   <a class="btn sm solid" href="${h.link?esc(h.link):gm(h.q||h.name)}" target="_blank" rel="noopener">${h.link?"링크":"구글맵"} ↗</a>${L}</div></article>`;
+}
+function renderStay(){
+  $("#v-stay").innerHTML=`<div class="ph"><h2>숙소 <small>1/17 – 1/20 · 4박</small></h2><span class="chip soft">‘여기로 할래’ 고르면 예산에 자동 반영</span></div>`+
+   STAYS.map(S=>{const L=[...S.list,...custom("stay",S.g)];
+    return `<div class="city"><h3>${S.title} <small>${S.when} · ${S.unit} 가격</small></h3>${S.intro?`<p class="note">${esc(S.intro)}</p>`:""}
+     <div class="grid2">${L.map(h=>stayCard(S,h)).join("")||`<div class="empty">${esc(S.empty)}</div>`}</div>${addForm("stay",S.g,`${S.title} 후보 추가`)}</div>`}).join("");
+}
+
+/* ---------- render: shop ---------- */
+function renderShop(){
+  $("#v-shop").innerHTML=`<div class="ph"><h2>쇼핑 <small>멘토링 주간 저녁 미션</small></h2></div>
+   <div class="city" style="margin-top:6px"><h3>다이소 헬로키티 <small>Daiso</small></h3>
+    <p class="note">품번(JAN)으로 검색하거나 직원한테 화면 보여주면 찾기 편해. 번호 누르면 복사돼.</p>
+    <ul class="list">${DAISO.map(([id,n,jan,p])=>`<li data-row="${id}"><label><input type="checkbox" data-chk="${id}"><span class="nm"><span>${esc(n)}</span><small>JAN ${jan}</small></span></label>
+      <button class="btn sm ghost" data-copy="${jan}">복사</button><span class="yen">${yen(p)}</span></li>`).join("")}
+     <li><span style="flex:1" class="lbl">합계 (6개 다 사면)</span><span class="yen"><b>${yen(DAISO.reduce((a,d)=>a+d[3],0))}</b></span></li></ul></div>
+   <div class="city"><h3>편의점 미션 <small>Konbini</small></h3><ul class="list">${CONV.map(([id,n,x])=>`<li data-row="${id}"><label><input type="checkbox" data-chk="${id}"><span class="nm"><span>${esc(n)}</span><small>${esc(x)}</small></span></label></li>`).join("")}</ul></div>
+   <div class="city"><h3>돈키호테 · 기타 <small>Etc.</small></h3><ul class="list" id="etcList">${custom("buy","etc").map(o=>`<li data-row="${o.id}"><label><input type="checkbox" data-chk="${o.id}"><span class="nm"><span>${esc(o.name)}</span>${o.memo?`<small>${esc(o.memo)}</small>`:""}</span></label><span class="yen">${o.price?yen(o.price):""}</span><button class="del" style="position:static" data-del="${o.id}">×</button></li>`).join("")||`<li style="color:var(--ink2);font-size:13px">사고 싶은 거 추가해줘</li>`}</ul>
+    <form class="form" data-add="buy" data-group="etc" style="margin-top:10px"><input name="name" placeholder="살 것" required><input name="memo" placeholder="메모 (어디서·누구 선물 등)"><input name="price" inputmode="numeric" placeholder="가격 ¥ (선택)"><button class="btn solid" type="submit">추가</button></form></div>`;
+}
+
+/* ---------- render: budget ---------- */
+function stayPick(g){const S=STAYS.find(s=>s.g===g);const id=V("pick_"+g,null);if(!id)return{S,name:null,p:0};const h=[...S.list,...custom("stay",g)].find(x=>x.id===id);const p=+V("hp_"+id,h&&h.price||0)||0;return{S,name:h?h.name:null,p}}
+function calc(){
+  let total=0;const rows={};
+  BUDGET.forEach(([,R])=>R.forEach(r=>{let sub;
+    if(r.stay){const {S,p}=stayPick(r.stay);sub=p*S.mult}
+    else{const p=+V("bp_"+r.id,r.p??0)||0,q=+V("bq_"+r.id,r.q)||0;sub=p*q}
+    rows[r.id]=sub;total+=sub}));
+  custom("cost","etc").forEach(o=>{const s=(+V("bp_"+o.id,o.price||0)||0)*(+V("bq_"+o.id,1)||0);rows[o.id]=s;total+=s});
+  return{rows,total};
+}
+function renderBudget(){
+  const row=r=>{
+    if(r.stay){const {S}=stayPick(r.stay);return `<tr><td>${esc(r.label)}<small data-stayname="${r.stay}"></small></td><td data-stayp="${r.stay}"></td><td>${S.multL}</td><td data-sub="${r.id}"></td></tr>`}
+    return `<tr><td>${esc(r.label)}${r.hint?`<small>${esc(r.hint)}</small>`:""}</td><td><input inputmode="numeric" data-k="bp_${r.id}" data-def="${r.p??""}" placeholder="—"></td><td><input class="q" inputmode="numeric" data-k="bq_${r.id}" data-def="${r.q}"></td><td data-sub="${r.id}"></td></tr>`};
+  $("#v-budget").innerHTML=`<div class="ph"><h2>예산 <small>1/17 – 1/21 · 둘이 합계</small></h2>
+    <div class="rate">환율 100엔 = <input inputmode="decimal" data-k="rate" data-def="850">원</div></div>
+   <div class="tot"><div class="main"><span class="lbl">합계 (엔)</span><b id="totY"></b></div><div><span class="lbl">합계 (원)</span><b id="totW"></b></div><div><span class="lbl">1인당 (원)</span><b id="perW"></b></div></div>
+   <table class="bud"><thead><tr><th>항목</th><th>단가 ¥</th><th>수량</th><th>소계</th></tr></thead><tbody>
+   ${BUDGET.map(([g,R])=>`<tr class="grp"><td colspan="4">${g}</td></tr>${R.map(row).join("")}`).join("")}
+   ${custom("cost","etc").length?`<tr class="grp"><td colspan="4">추가 항목</td></tr>`:""}
+   ${custom("cost","etc").map(o=>`<tr><td>${esc(o.name)} <button class="del" style="position:static;display:inline" data-del="${o.id}">×</button></td><td><input inputmode="numeric" data-k="bp_${o.id}" data-def="${o.price||""}"></td><td><input class="q" inputmode="numeric" data-k="bq_${o.id}" data-def="1"></td><td data-sub="${o.id}"></td></tr>`).join("")}
+   </tbody></table>
+   <form class="form" data-add="cost" data-group="etc" style="margin-top:12px"><input name="name" placeholder="항목 추가 (예: 교토 기모노 체험)" required><input name="price" inputmode="numeric" placeholder="단가 ¥"><button class="btn solid" type="submit">추가</button></form>
+   <p class="note">멘토링 주간(1/11–16) 오사카 비용은 빼고, 헤어세트·다이소만 넣었어. 빈 칸은 정해지면 채우면 돼. 환율 기본값은 2026년 10월 시세(100엔≈850원).</p>`;
+}
+
+/* ---------- refresh dynamic bits ---------- */
+function refresh(){
+  document.querySelectorAll("input[data-k]").forEach(i=>{if(i===document.activeElement)return;const d=i.dataset.def;const v=V(i.dataset.k,d===undefined||d===""?"":d);i.value=v===""?"":(+v).toLocaleString("en-US",{maximumFractionDigits:2}).replace(/,/g,"")});
+  document.querySelectorAll("input[data-chk]").forEach(c=>{const on=!!V("chk_"+c.dataset.chk,false);c.checked=on;c.closest("li")?.classList.toggle("done",on)});
+  document.querySelectorAll("[data-stayname]").forEach(el=>{const {name,p}=stayPick(el.dataset.stayname);el.textContent=name||"숙소 탭에서 ‘여기로 할래’ 고르기";const pe=document.querySelector(`[data-stayp="${el.dataset.stayname}"]`);if(pe)pe.textContent=p?yen(p):"—"});
+  if($("#totY")){const {rows,total}=calc();const r=(+V("rate",850)||850)/100;
+    document.querySelectorAll("[data-sub]").forEach(td=>{const s=rows[td.dataset.sub]||0;td.textContent=s?yen(s):"—"});
+    $("#totY").textContent=yen(total);$("#totW").textContent=won(total*r);$("#perW").textContent=won(total*r/2)}
+}
+function renderAll(){renderPlan();renderPlaces();renderStay();renderShop();renderBudget();refresh()}
+
+/* ---------- routing ---------- */
+const VIEWS=["w","d17","d18","d19","d20","d21","places","stay","shop","budget"];
+function route(){const h=(location.hash||"#d17").slice(1);const v=VIEWS.includes(h)?h:"d17";
+  VIEWS.forEach(x=>$("#v-"+x).classList.toggle("on",x===v));
+  document.querySelectorAll("#tabs a").forEach(a=>a.setAttribute("aria-current",a.getAttribute("href")==="#"+v?"page":"false"));}
+window.addEventListener("hashchange",()=>{route();window.scrollTo({top:0})});
+
+/* ---------- events ---------- */
+document.addEventListener("input",e=>{const i=e.target;if(i.dataset&&i.dataset.k){const raw=i.value.replace(/[^\d.]/g,"");setV(i.dataset.k,raw===""?null:+raw)}});
+document.addEventListener("change",e=>{const t=e.target;
+  if(t.dataset.chk){setV("chk_"+t.dataset.chk,t.checked)}
+  if(t.dataset.pick){setV("pick_"+t.dataset.pick,t.value);renderStay();renderPlan();renderBudget();refresh();toast("숙소 선택됨 → 예산 반영")}});
+document.addEventListener("click",e=>{
+  const mv=e.target.closest("[data-mv]");if(mv){mapView=mv.dataset.mv;selPin=null;renderMap();return}
+  const pin=e.target.closest("[data-pin]");if(pin){selPin=pin.dataset.pin;renderMap();return}
+  const cp=e.target.closest("[data-copy]");if(cp){navigator.clipboard?.writeText(cp.dataset.copy).then(()=>toast("JAN 복사됨"),()=>toast(cp.dataset.copy));return}
+  const dl=e.target.closest("[data-del]");if(dl){if(dl.dataset.armed){delItem(dl.dataset.del)}else{dl.dataset.armed=1;dl.textContent="삭제?";setTimeout(()=>{delete dl.dataset.armed;dl.textContent="×"},2500)}return}
+  const go=e.target.closest("[data-go]");if(go){const id=go.dataset.go;setTimeout(()=>{const c=document.getElementById("c-"+id);if(c){c.scrollIntoView({block:"center",behavior:"smooth"});c.animate([{boxShadow:"0 0 0 3px var(--mark)"},{boxShadow:"0 0 0 0 transparent"}],{duration:1600})}},60)}
+});
+document.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.dataset&&e.target.dataset.pin){e.preventDefault();selPin=e.target.dataset.pin;renderMap()}});
+document.addEventListener("submit",e=>{const f=e.target;if(!f.dataset.add)return;e.preventDefault();
+  const d=Object.fromEntries(new FormData(f));if(!d.name||!d.name.trim())return;
+  const o={kind:f.dataset.add,group:f.dataset.group,name:d.name.trim().slice(0,120)};
+  if(d.cat)o.cat=d.cat;if(d.memo)o.memo=d.memo.trim().slice(0,200);
+  if(d.link&&/^https?:\/\//.test(d.link.trim()))o.link=d.link.trim().slice(0,500);
+  const pr=+(String(d.price||"").replace(/[^\d.]/g,""));if(pr)o.price=pr;
+  if(o.kind==="place"||o.kind==="stay")o.q=o.name;
+  addItem(o);f.reset();toast("추가됨")});
+
+/* ---------- boot ---------- */
+loadLocal();renderAll();route();
+(async()=>{
+  let db=null;try{db=window.claude&&await window.claude.use("db")}catch(e){}
+  if(!db){setSync("off","이 기기에만 저장 중");return}
+  DB=db;setSync("","불러오는 중…");
+  const timer=setTimeout(()=>setSync("off","공유 데이터 연결 지연 중"),10000);
+  let first=true,lastSig=null;
+  const fail=e=>{clearTimeout(timer);setSync("off",e&&e.code==="revoked"?"연결 끊김":"공유 저장 불가 — 이 기기에만");DB=null};
+  DB.collection("vals").onSnapshot(s=>{const nv={};s.docs.forEach(d=>{nv[d.id]=d.data().v});
+      Object.keys(pend).forEach(k=>{if(k in VALS)nv[k]=VALS[k]});VALS=nv;
+      if(!s.metadata.fromCache){clearTimeout(timer);setSync("on",writable?"언니랑 실시간 공유 중":"보기 전용")}
+      const sig=STAYS.map(S=>VALS["pick_"+S.g]||"").join("|");
+      if(first){first=false;renderAll()}else if(sig!==lastSig){renderStay();renderPlan();refresh()}else refresh();
+      lastSig=sig},fail);
+  DB.collection("items").onSnapshot(s=>{const n={};s.docs.forEach(d=>{n[d.id]=d.data()});ITEMS=n;renderAll()},fail);
+})();
+</script>
+</body>
+</html>
