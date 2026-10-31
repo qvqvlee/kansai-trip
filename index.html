@@ -86,6 +86,32 @@ section.view.on{display:block}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
 .legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--ink2)}
 .gmap{width:100%;height:min(62vh,520px);border:1px solid var(--rule);border-radius:6px;margin:6px 0 4px;background:var(--paper2)}
+.dgrid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(260px,1fr);gap:16px;align-items:start;margin:6px 0 10px}
+.dgrid .gmap{margin:0;height:min(64vh,540px)}
+.legs{border:1px solid var(--rule);border-radius:6px;background:var(--paper);padding:12px 14px}
+.legs h4{margin:0 0 6px;font-family:var(--f-label);font-size:10.5px;letter-spacing:.18em;color:var(--ink2);font-weight:400}
+.leg{display:grid;grid-template-columns:22px 1fr;gap:8px;padding:9px 0;border-bottom:1px solid var(--rule2)}
+.leg .i{font-size:15px;line-height:1.4}
+.leg .r{font-size:13.5px}
+.leg .m{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:2px;font-family:var(--f-label);font-size:11.5px;color:var(--ink2)}
+.leg .m b{font-weight:500;color:var(--ink)}
+.leg .m .y{color:var(--good)}
+.legs .sum{margin-top:8px;padding-top:8px;border-top:1.5px solid var(--ink);display:flex;justify-content:space-between;font-family:var(--f-label);font-size:12px}
+.memos{margin-top:18px}
+.memo{border:1px solid var(--rule);border-radius:6px;background:var(--paper);margin-bottom:8px}
+.memo>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:11px 14px;font-size:15px}
+.memo>summary::-webkit-details-marker{display:none}
+.memo>summary::before{content:"▸";color:var(--ink2);transition:transform .2s;font-size:12px}
+.memo[open]>summary::before{transform:rotate(90deg)}
+.memo>summary .em{font-size:18px}
+.memo>summary .tg{margin-left:auto}
+.memo .body{padding:2px 16px 14px 38px}
+.props{display:grid;grid-template-columns:86px 1fr;gap:5px 12px;font-size:13px;margin:4px 0 10px}
+.props dt{color:var(--ink2);font-family:var(--f-label);font-size:11.5px;letter-spacing:.04em;padding-top:1px}
+.props dd{margin:0}
+.memo .body ul{margin:4px 0;padding-left:18px;font-size:13px}
+.memo .co{margin:8px 0 0;padding:8px 12px;background:var(--paper2);border-radius:4px;font-size:13px}
+@media (max-width:760px){.dgrid{grid-template-columns:1fr}.dgrid .gmap{height:52vh}.memo .body{padding-left:16px}}
 .mapwrap{border:1px solid var(--rule);border-radius:6px;background:#f7f5f0;overflow:hidden}
 .mapwrap svg{display:block;width:100%;height:auto;touch-action:manipulation}
 .pin{cursor:pointer}
@@ -277,6 +303,39 @@ const DMAP={17:["34.6627,135.5016","34.685047,135.843012","34.6889851,135.839815
  21:["34.6641574,135.5011441","34.4319994,135.2366019"],
  w:["34.6300,135.4180","34.6720,135.5045","34.6689189,135.5010687","34.6680,135.5258"]};
 const emb=a=>"https://maps.google.com/maps?saddr="+a[0]+"&daddr="+a.slice(1).join("+to:")+"&dirflg=r&hl=ko&output=embed";
+const LEGS={
+ w:[["🚇","OKIS(코스모스퀘어) → 신사이바시","주오선 → 혼마치 환승 미도스지선","약 25분","약 10km",""],
+    ["🚶","신사이바시역 → new me","6번 출구에서 도보","5분","0.4km",""],
+    ["🚶","new me → 도톤보리 글리코","도보","7분","0.5km",""],
+    ["🚶","도톤보리 → 돈키호테","도보","1분","0.1km",""],
+    ["🚇","닛폰바시 → 오사카우에혼마치 → 루프라","킨테츠 1정거장 + 도보 5분","약 15분","2.5km",""]],
+ 17:[["🚃","난바 → 킨테츠나라","킨테츠 쾌속급행","약 40분","약 32km","약 ¥680"],
+     ["🚶","킨테츠나라 → 나라공원 → 도다이지","도보 (사슴 구간)","20분","1.5km",""],
+     ["🚶","도다이지 → 킨테츠나라","도보","20분","1.5km",""],
+     ["🚃","킨테츠나라 → 교토","킨테츠 특급","37분","약 35km","¥1,280"],
+     ["🚌","교토역 → 기온","시버스 or 택시","약 20분","4km",""]],
+ 18:[["🚶","교토 시내","가고 싶은 곳 정해지면 구간 추가","—","",""]],
+ 19:[["🚌","교토역 하치조구치 → 아리마온천","고속버스 (사전 예약)","1시간 15분","약 70km","¥2,000"],
+     ["🚶","버스정류장 → 료칸 · 킨노유","도보","5–10분","0.5km",""]],
+ 20:[["🚌","아리마온천 → 산노미야","버스 or 고베전철","30–45분","약 15km",""],
+     ["🚶","산노미야 → 기타노 이진칸","오르막 도보","15분","1km",""],
+     ["🚶","기타노 → 메리켄파크","도보 (내리막)","25분","2km",""],
+     ["🚃","산노미야 → 오사카난바","한신선 직통","약 40분","약 33km",""],
+     ["🚶","난바 → 호텔 / 도톤보리","도보","5분","0.4km",""]],
+ 21:[["🚶","호텔 → 난카이 난바역","스위소텔이면 직결","2분","",""],
+     ["🚄","난바 → 간사이공항 T1","라피트","38분","약 42km","¥1,490"],
+     ["✈︎","KIX T1 → 인천 T1","파라타항공 WE512 11:45→13:45","2시간","",""]]
+};
+function legsHTML(k){const L=LEGS[k]||[];return `<aside class="legs"><h4>MOVE · 이동 정리</h4>${L.map(([i,r,t,tm,km,y])=>`<div class="leg"><div class="i">${i}</div><div><div class="r">${esc(r)}</div><div class="m"><span>${esc(t)}</span><b>${esc(tm)}</b>${km?`<span>${esc(km)}</span>`:""}${y?`<span class="y">${esc(y)}</span>`:""}</div></div></div>`).join("")}<div class="sum"><span>구간 ${L.length}개</span><span>시간·요금은 대략값</span></div></aside>`}
+const MEMOS=[
+ {em:"💇‍♀️",t:"new me 헤어세트",tag:"평일 16시~",p:[["위치","東心斎橋2-8-11 永弘(에이코)빌딩 5F"],["가격","¥1,300~ / 인 (평일 16시 이후 15분 세트 쿠폰)"],["영업","평일 10–21시 · 토일 7–16시"],["예약","핫페퍼뷰티"]],
+  li:["신사이바시역 6번 출구 → 난바 방향 → GU·유니클로 있는 골목(八幡筋)으로 좌회전","1층에 遊斎 있는 건물 5층, 동그란 간판"],co:"원하는 스타일 사진 몇 장 가져가서 그날 옷·메이크업에 맞게 추천받기!",q:"HAIR MAKE SALON new me 東心斎橋"},
+ {em:"🍮",t:"킷사 루프라 喫茶ルプラ",tag:"일·공휴일 휴무",p:[["위치","天王寺区小橋町8-15 (우에혼마치)"],["메뉴","수제 커스터드 푸딩 (위에 캐러멜 빙수) · 오므라이스"],["가격","푸딩 ¥350 전후"],["시간","오므라이스는 15:30부터"]],
+  li:["1974년부터 이어진 레트로 킷사텐 · 자가배전 커피","킨테츠 오사카우에혼마치역 도보 5분 / JR 츠루하시 도보 7분"],co:"멘토링 끝나고 평일 저녁이나 토요일(1/16)에!",q:"喫茶ルプラ 大阪"},
+ {em:"🎀",t:"다이소 헬로키티템",tag:"총 ¥1,210",p:[["목록","오프너 · 빨대캡 · 조리개 파우치 · PVC백 · 휴대용 슬리퍼 · 지퍼백"],["찾기","JAN 번호 보여주기 (쇼핑 탭에서 복사)"]],li:[],co:"쇼핑 탭에서 체크하면서 사기",q:"ダイソー 難波"},
+ {em:"🏪",t:"편의점 미션",tag:"3개",p:[["세븐일레븐","말차 스무디 (시즌 한정 — 없으면 다른 맛)"],["로손","모찌뿌요 もちぷよ (세븐 아님!)"],["어디나","나메라카 푸딩 なめらかプリン"]],li:[],co:"",q:"ローソン 心斎橋"},
+ {em:"🛍",t:"돈키호테 도톤보리점",tag:"면세",p:[["위치","도톤보리 강변 (관람차 있는 건물)"],["팁","여권 챙기면 면세"]],li:[],co:"살 것 목록은 쇼핑 탭 '돈키호테 · 기타'에 추가",q:"ドン・キホーテ 道頓堀店"}];
+function memosHTML(){return `<div class="memos"><div class="ph" style="margin-bottom:10px"><h2 style="font-size:20px">메모 <small>눌러서 펼치기</small></h2></div>${MEMOS.map(m=>`<details class="memo"><summary><span class="em">${m.em}</span>${esc(m.t)}<span class="chip soft tg">${esc(m.tag)}</span></summary><div class="body"><dl class="props">${m.p.map(([a,b])=>`<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join("")}</dl>${m.li.length?`<ul>${m.li.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}${m.co?`<p class="co">💡 ${esc(m.co)}</p>`:""}<div style="margin-top:10px"><a class="btn sm solid" href="${gm(m.q)}" target="_blank" rel="noopener">구글맵 ↗</a></div></div></details>`).join("")}</div>`}
 const DAYS=[
  {n:17,wd:"SUN 일",title:"오사카 → 나라 → 교토",sleep:"교토 1박",stops:[
   {t:"11:00",n:"팀원들 귀국 · 우리 둘이 출발",x:"짐 챙겨서 킨테츠 난바역으로"},
@@ -379,21 +438,14 @@ function renderPlan(){
     <div>
       <div class="dhead"><h3>오사카 · OKIS 멘토링 주간</h3><span class="sleep">저녁 자유시간에 오사카 털기</span></div>
       <div class="x" style="font-size:13px;color:var(--ink2)">헤어세트 쿠폰이 <mark>평일 16시 이후</mark>라 이 주간이 딱이야. 루프라는 일·공휴일 휴무라 평일 저녁이나 토요일에.</div>
-      <div class="mission">
-        <a class="btn sm" href="#places" data-go="newme">💇‍♀️ new me 헤어세트</a>
-        <a class="btn sm" href="#places" data-go="lupra">🍮 킷사 루프라</a>
-        <a class="btn sm" href="#shop">🎀 다이소 키티템</a>
-        <a class="btn sm" href="#shop">🏪 편의점 미션</a>
-        <a class="btn sm" href="#places" data-go="donki">🛍 돈키호테</a>
-      </div>
     </div>
   </div>
-  <iframe class="gmap" loading="lazy" src="${emb(DMAP.w)}" title="오사카 지도"></iframe>`;
+  <div class="dgrid"><iframe class="gmap" loading="lazy" src="${emb(DMAP.w)}" title="오사카 지도"></iframe>${legsHTML("w")}</div>${memosHTML()}`;
   $("#v-w").innerHTML=W;
   DAYS.forEach(d=>{$("#v-d"+d.n).innerHTML=`<div class="day">
     <div class="dcol"><div class="num">1.${d.n}</div><div class="wd">${d.wd}</div></div>
     <div><div class="dhead"><h3>${esc(d.title)}</h3>${d.sleep!=="—"?sleepTxt(d):""}</div>
-    <iframe class="gmap" loading="lazy" src="${emb(DMAP[d.n])}" title="1/${d.n} 구글맵"></iframe>
+    <div class="dgrid"><iframe class="gmap" loading="lazy" src="${emb(DMAP[d.n])}" title="1/${d.n} 구글맵"></iframe>${legsHTML(d.n)}</div>
     <ul class="stops">${d.stops.map(stopHTML).join("")}</ul></div></div>`});
 }
 
